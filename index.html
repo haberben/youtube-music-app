@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FF0000">
+    <title>YouTube Music Pro</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #030303;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Title Bar */
+        .titlebar {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            border-bottom: 1px solid #ff0000;
+            -webkit-app-region: drag;
+            user-select: none;
+        }
+
+        .titlebar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-icon {
+            width: 20px;
+            height: 20px;
+            background: #FF0000;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .app-title {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .titlebar-controls {
+            display: flex;
+            gap: 10px;
+            -webkit-app-region: no-drag;
+        }
+
+        .control-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .control-btn.minimize:hover {
+            background: rgba(255, 189, 46, 0.2);
+        }
+
+        .control-btn.maximize:hover {
+            background: rgba(40, 200, 64, 0.2);
+        }
+
+        .control-btn.close:hover {
+            background: rgba(255, 95, 87, 0.8);
+        }
+
+        /* Sidebar */
+        .container {
+            display: flex;
+            height: calc(100vh - 40px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+            padding: 20px;
+            border-right: 1px solid #2a2a2a;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 25px;
+        }
+
+        .sidebar-title {
+            color: #888;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #bbb;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 0, 0, 0.1);
+            color: #fff;
+        }
+
+        .sidebar-item.active {
+            background: rgba(255, 0, 0, 0.2);
+            color: #FF0000;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .theme-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: #888;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+
+        .theme-btn.active {
+            background: #FF0000;
+            color: #fff;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+        }
+
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+
+        .loading-logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #FF0000, #CC0000);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+            box-shadow: 0 20px 60px rgba(255, 0, 0, 0.4);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .loading-logo svg {
+            width: 60px;
+            height: 60px;
+            fill: white;
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .loading-subtext {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .launch-button {
+            background: linear-gradient(135deg, #FF0000, #CC0000);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .launch-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 0, 0, 0.5);
+        }
+
+        /* Web Frame */
+        .web-frame {
+            display: none;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Mini Player */
+        .mini-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid #FF0000;
+            border-radius: 15px;
+            padding: 20px;
+            display: none;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .mini-player.active {
+            display: block;
+        }
+
+        /* Visualizer */
+        .visualizer {
+            position: fixed;
+            top: 40px;
+            left: 250px;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #FF0000, #CC0000, #FF0000);
+            background-size: 200% 100%;
+            animation: visualize 2s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .visualizer.active {
+            opacity: 1;
+        }
+
+        @keyframes visualize {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FF0000;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #CC0000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Title Bar -->
+    <div class="titlebar">
+        <div class="titlebar-left">
+            <div class="app-icon">▶</div>
+            <div class="app-title">YouTube Music Pro</div>
+        </div>
+        <div class="titlebar-controls">
+            <button class="control-btn minimize" onclick="minimizeWindow()">─</button>
+            <button class="control-btn maximize" onclick="maximizeWindow()">□</button>
+            <button class="control-btn close" onclick="closeWindow()">✕</button>
+        </div>
+    </div>
+
+    <!-- Visualizer -->
+    <div class="visualizer" id="visualizer"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Görünüm</div>
+                <div class="theme-toggle">
+                    <button class="theme-btn active" onclick="setTheme('dark')">🌙 Dark</button>
+                    <button class="theme-btn" onclick="setTheme('red')">❤️ Red</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Özellikler</div>
+                <div class="sidebar-item active" onclick="openYouTubeMusic()">
+                    <span>🎵</span>
+                    <span>Ana Sayfa</span>
+                </div>
+                <div class="sidebar-item" onclick="toggleMiniPlayer()">
+                    <span>📱</span>
+                    <span>Mini Player</span>
+                </div>
+                <div class="sidebar-item" onclick="toggleVisualizer()">
+                    <span>📊</span>
+                    <span>Visualizer</span>
+                </div>
+                <div class="sidebar-item" onclick="openInBrowser()">
+                    <span>🌐</span>
+                    <span>Tarayıcıda Aç</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Kısayollar</div>
+                <div style="color: #666; font-size: 11px; padding: 10px;">
+                    <div style="margin-bottom: 8px;">Space - Oynat/Duraklat</div>
+                    <div style="margin-bottom: 8px;">→ - Sonraki Şarkı</div>
+                    <div style="margin-bottom: 8px;">← - Önceki Şarkı</div>
+                    <div>M - Mini Player</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="loading-screen" id="loadingScreen">
+                <div class="loading-logo">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                    </svg>
+                </div>
+                <div class="loading-text">YouTube Music Pro</div>
+                <div class="loading-subtext">Gelişmiş müzik deneyimi için hazır</div>
+                <button class="launch-button" onclick="launchApp()">🚀 Başlat</button>
+            </div>
+            <iframe id="webFrame" class="web-frame" src="about:blank"></iframe>
+        </div>
+    </div>
+
+    <!-- Mini Player -->
+    <div class="mini-player" id="miniPlayer">
+        <div style="text-align: center; color: #888;">
+            Mini Player Modu<br>
+            <small>Yakında aktif olacak</small>
+        </div>
+    </div>
+
+    <script>
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        function launchApp() {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('webFrame').style.display = 'block';
+            window.open('https://music.youtube.com', 'YouTubeMusic', 'width=' + (screen.width * 0.9) + ',height=' + (screen.height * 0.9) + ',left=' + (screen.width * 0.05) + ',top=' + (screen.height * 0.05));
+            document.getElementById('visualizer').classList.add('active');
+        }
+
+        function openYouTubeMusic() {
+            launchApp();
+        }
+
+        function toggleMiniPlayer() {
+            document.getElementById('miniPlayer').classList.toggle('active');
+        }
+
+        function toggleVisualizer() {
+            document.getElementById('visualizer').classList.toggle('active');
+        }
+
+        function openInBrowser() {
+            window.open('https://music.youtube.com', '_blank');
+        }
+
+        function setTheme(theme) {
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (theme === 'red') {
+                document.body.style.background = 'linear-gradient(135deg, #1a0000 0%, #330000 100%)';
+            } else {
+                document.body.style.background = '#030303';
+            }
+        }
+
+        function minimizeWindow() {
+            // PWA'da minimize çalışmaz ama görsel için
+            alert('Tarayıcı penceresini küçültebilirsiniz');
+        }
+
+        function maximizeWindow() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function closeWindow() {
+            window.close();
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                // Space için YouTube Music kontrolü
+            }
+            if (e.code === 'KeyM') {
+                toggleMiniPlayer();
+            }
+        });
+
+        // Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+    </script>
+</body>
+</html>

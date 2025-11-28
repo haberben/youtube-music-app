@@ -1,0 +1,32 @@
+{
+  "name": "YouTube Music Pro",
+  "short_name": "YT Music",
+  "description": "YouTube Music için gelişmiş masaüstü uygulaması",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030303",
+  "theme_color": "#FF0000",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%23FF0000' rx='40'/%3E%3Cpath fill='white' d='M96 50c-25.4 0-46 20.6-46 46s20.6 46 46 46 46-20.6 46-46-20.6-46-46-46zm-12 66V76l24 20-24 20z'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23FF0000' rx='100'/%3E%3Cpath fill='white' d='M256 140c-64 0-116 52-116 116s52 116 116 116 116-52 116-116-52-116-116-116zm-30 166V206l60 50-60 50z'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["music", "entertainment"],
+  "shortcuts": [
+    {
+      "name": "Ana Sayfa",
+      "url": "/",
+      "description": "YouTube Music Ana Sayfa"
+    }
+  ]
+}
